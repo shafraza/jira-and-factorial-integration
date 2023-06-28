@@ -1,22 +1,13 @@
 const express = require('express');
 const app = express();
 
-
-//ngrock headers insertion
-
-app.use((req, res, next) => {
-  if (req.originalUrl.startsWith('/api')) {
-    res.set('ngrok-skip-browser-warning', 'true');
-  }
-  next();
-});
-
 require('dotenv').config();
-
+// 
 const JiraIssuesController = require('./controllers/JiraIssuesController.js');
 const JiraProjectsController = require('./controllers/JiraProjectsController.js');
 const JiraTransitionsController = require('./controllers/JiraTransitionsController.js');
 const JiraUsersController = require('./controllers/JiraUsersController.js');
+
 
 
 
@@ -129,4 +120,40 @@ app.get('/', async (req, res) => {
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
+});
+
+
+app.get('/api/factorial/create-task', async (req, res) => {
+  try {
+
+   
+    const axios = require('axios');
+
+const url = 'https://api.factorialhr.com/api/v1/core/tasks';
+const apiKey = '93c88f905bfa76fa56d985bdf533e19400f78de732344df8e314eb735ea42c81';
+
+const data = {
+  name: 'Task Create By Jira Automation',
+  due_on: '2023-07-18',
+  content: 'I am the task created by Jira Automation',
+};
+
+const headers = {
+  'x-api-key': apiKey
+};
+
+axios.post(url, data, { headers })
+  .then(response => {
+
+    res.status(200).json(`Task Created Successfully: ${response.data.name}`);
+  })
+  .catch(error => {
+    console.error('Error creating task:', error.response.data);
+  });
+
+
+
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
 });

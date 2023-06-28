@@ -2,6 +2,7 @@ const {  axios, auth, baseUrl, username, password, leadAccountID, projKey } = re
 
 async function getIssues() {
 
+
   try {
 
 
@@ -19,7 +20,6 @@ async function getIssues() {
   }
 }
 
-//creates an issue in Jira Cloud using REST API 
 async function createIssue(projectKey, issueType, summary, description) {
 
   try {
