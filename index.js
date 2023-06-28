@@ -123,7 +123,7 @@ app.listen(3000, () => {
 });
 
 
-app.get('/api/factorial/create-task', async (req, res) => {
+app.post('/api/factorial/create-task', async (req, res) => {
   try {
 
    
