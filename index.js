@@ -145,7 +145,7 @@ const headers = {
 axios.post(url, data, { headers })
   .then(response => {
 
-    res.status(200).json(`Task Created Successfully: ${response.data.name}`);
+    res.status(200).json({ message: `Task Created Successfully`, data: response.data });
   })
   .catch(error => {
     console.error('Error creating task:', error.response.data);
