@@ -13,11 +13,35 @@ async function getUsers() {
       auth: auth
     };
     const response = await axios.request(config);
-    return response.data;
+    users = response.data;
+    const filteredUsers = users.filter(user => user.accountType === 'atlassian');
+
+
+    return filteredUsers;
   } catch (error) {
     console.log('error: ')
+
+
     console.log(error.response.data.errors)
   }
 }
+async function getSingleUser(accountId) {
 
-module.exports = {getUsers};
+  try {
+
+
+    const config = {
+      method: 'get',
+      url: baseUrl + `/rest/api/2/user?accountId=${accountId}`,
+      headers: { 'Content-Type': 'application/json' },
+      auth: auth
+    };
+    const response = await axios.request(config);
+
+   return response.data;
+  } catch (error) {
+    console.log('error: ')
+    console.log(error.response)
+  }
+}
+module.exports = {getUsers,getSingleUser};

@@ -17,12 +17,29 @@ const getRecentProjects = async () => {
   return recentProjects;
 }
 
+
+const projectWiseIssuesFunc = async (projectKey) => {
+
+  const issues = await JiraIssuesController.searchIssuesInJira(projectKey);
+  return issues;
+}
+
 const getIssuesFunc = async () => {
   const issues = await JiraIssuesController.getIssues();
   return issues;
 }
 
+const getIssuesByUsersFunc = async () => {
+  const issues = await JiraIssuesController.getIssuesByUsersInAllProjects();
+  return issues;
+}
 
+
+
+const getTodayStatsFunc = async () => {
+  const issues = await JiraIssuesController.getTodayStats();
+  return issues;
+}
 const getTransitionsFunc = async (issueKey) => {
   const transitions = await JiraTransitionsController.getTransitions(issueKey);
   return transitions;
@@ -42,6 +59,11 @@ const getUsersFunc = async () => {
   const users = await JiraUsersController.getUsers();
   return users;
 }
+const getSingleUserFunc = async (accountId) => {
+  const user = await JiraUsersController.getSingleUser(accountId);
+
+  return user;
+}
 
 
 app.get('/api/users', async (req, res) => {
@@ -55,10 +77,61 @@ app.get('/api/users', async (req, res) => {
   }
 });
 
+
+app.get('/api/user/:accountId', async (req, res) => {
+  try {
+    const accountId = req.params.accountId;
+    const user = await getSingleUserFunc(accountId);
+
+    res.status(200).json(user);
+
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'Failed to get issue' });
+  }
+});
+
 app.get('/api/projects', async (req, res) => {
   try {
     const projects = await getRecentProjects();
     res.status(200).json(projects);
+
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'Failed to get issue' });
+  }
+});
+
+
+app.get('/api/project-issues/:projectKey', async (req, res) => {
+  try {
+    const projectKey = req.params.projectKey;
+    const issues = await projectWiseIssuesFunc(projectKey);
+    res.status(200).json(issues);
+
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'Failed to get issue' });
+  }
+});
+
+app.get('/api/issues-by-user', async (req, res) => {
+  try {
+    const issues = await getIssuesByUsersFunc();
+    res.status(200).json(issues);
+
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'Failed to get issue' });
+  }
+});
+
+
+
+app.get('/api/get-today-stats', async (req, res) => {
+  try {
+    const issues = await getTodayStatsFunc();
+    res.status(200).json(issues);
 
   } catch (error) {
     console.error('Error:', error.message);
