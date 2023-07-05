@@ -5,21 +5,17 @@ const JiraProjectsController = require('./JiraProjectsController');
 
 function getCurrentDate() {
   const today = new Date();
-  const year = today.getFullYear();
-  let month = today.getMonth() + 1;
-  let day = today.getDate();
-
-  // Add leading zeros if month or day is a single digit
-  if (month < 10) {
-    month = `0${month}`;
-  }
-  if (day < 10) {
-    day = `0${day}`;
-  }
-
+  const options = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    timeZone: 'Europe/Dublin'
+  };
+  const [day, month, year] = today.toLocaleDateString('en-GB', options).split('/');
   const currentDate = `${year}-${month}-${day}`;
   return currentDate;
 }
+
 
 
 
@@ -237,6 +233,7 @@ async function getIssuesByUsersInAllProjects(deadlineParam = null) {
 
 async function getTodayStats() {
   const todayDate = getCurrentDate();
+  console.log("today data", todayDate);
   const userWiseIssues = await getIssuesByUsersInAllProjects(todayDate);
   const statsByUser = {};
 
