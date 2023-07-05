@@ -191,6 +191,83 @@ async function getIssuesByUsersInAllProjects(deadlineParam = null) {
 }
 
 
+
+
+async function getIssuesByUsersInAllProjectsViaID(deadlineParam = null) {
+  try {
+    const projects = await JiraProjectsController.getProjects(); // Call the getprojects function to retrieve all projects
+    const users = await JiraUsersController.getUsers(); // Call the getusers function to retrieve all users
+
+    const issuesByUser = {};
+
+    for (const project of projects) {
+      const issues = await searchIssuesInJira(project.key); // Call the getissues function for each project
+
+      for (const issue of issues) 
+      {
+        const assignee = issue.fields.assignee;
+        let deadline = '';
+        let approvedHours = '';
+
+        if (assignee) {
+          const assigneeID = assignee.accountId;
+
+          if (!issuesByUser[assigneeID]) {
+            issuesByUser[assigneeID] = [];
+          }
+        if(project.key == 'ASTR'){
+             deadline =  issue.fields.customfield_10074
+             approvedHours = issue.fields.customfield_10075
+
+        }
+        else  if(project.key == 'VS121'){
+            deadline =  issue.fields.customfield_10101
+            approvedHours = issue.fields.customfield_10100
+        }   
+        else  if(project.key == 'CAD'){
+            deadline =  issue.fields.customfield_10066
+            approvedHours = issue.fields.customfield_10067
+        }
+        else  if(project.key == 'L2D'){
+          deadline =  issue.fields.customfield_10089
+          approvedHours = issue.fields.customfield_10090
+      }
+      else  if(project.key == 'CR'){
+        deadline =  issue.fields.customfield_10046
+        approvedHours = issue.fields.customfield_10082
+    }
+      else{
+          deadline =  null,
+          approvedHours = null
+
+        }
+
+        if (deadlineParam && deadline !== deadlineParam) {
+          continue; // Skip the current issue if the deadline doesn't match
+        }else{
+          issuesByUser[assigneeID].push({
+            issueKey: issue.key,
+            projectKey: project.key,
+            summary: issue.fields.summary,
+            status: issue.fields.status.name,
+            description: issue.fields.description,
+            approvedHours: approvedHours,
+            deadline: deadline
+
+          });
+        }
+        }
+      }
+    }
+
+    return issuesByUser;
+  } catch (error) {
+    console.log('Error: ');
+    console.log(error);
+    throw error;
+  }
+}
+
 // async function getTodayStats(){
 
 //   const todayDate= getCurrentDate();
@@ -234,11 +311,11 @@ async function getIssuesByUsersInAllProjects(deadlineParam = null) {
 
 async function getTodayStats() {
   const todayDate = getCurrentDate();
-  console.log("today data", todayDate);
-  const userWiseIssues = await getIssuesByUsersInAllProjects(todayDate);
+  const userWiseIssues = await getIssuesByUsersInAllProjectsViaID(todayDate);
   const statsByUser = {};
 
   for (const key in userWiseIssues) {
+
     let user = await JiraUsersController.getSingleUser(key);
     let userDisplayName = user.displayName;
     let sumApprovedHours = 0;
