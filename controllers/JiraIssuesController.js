@@ -77,7 +77,7 @@ async function getIssues() {
 async function searchIssuesInJira(projectKey) {
 
   const jiraBaseUrl = 'https://refinestudio.atlassian.net';
-  const jqlQuery = `project=${projectKey} AND  status != "Done"`;
+  const jqlQuery = `project=${projectKey} AND  status != "Done" AND  status != "Merged to Development" AND  status != "Merged to Quality Assurance" AND  status != "Closed Tasks"`;
 
 
   try {
@@ -132,7 +132,7 @@ async function getIssuesByUsersInAllProjects(deadlineParam = null) {
         let approvedHours = '';
 
         if (assignee) {
-          const assigneeID = assignee.accountId;
+          const assigneeID = assignee.displayName;
 
           if (!issuesByUser[assigneeID]) {
             issuesByUser[assigneeID] = [];
@@ -171,6 +171,7 @@ async function getIssuesByUsersInAllProjects(deadlineParam = null) {
             issueKey: issue.key,
             projectKey: project.key,
             summary: issue.fields.summary,
+            status: issue.fields.status.name,
             description: issue.fields.description,
             approvedHours: approvedHours,
             deadline: deadline
