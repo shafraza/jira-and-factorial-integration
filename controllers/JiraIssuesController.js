@@ -155,8 +155,8 @@ async function getIssuesByUsersInAllProjects(deadlineParam = null) {
           approvedHours = issue.fields.customfield_10090
       }
       else  if(project.key == 'CR'){
-        deadline =  issue.fields.customfield_10047
-        approvedHours = issue.fields.customfield_10081
+        deadline =  issue.fields.customfield_10046
+        approvedHours = issue.fields.customfield_10082
     }
       else{
           deadline =  null,
